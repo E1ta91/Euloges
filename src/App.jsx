@@ -2,6 +2,7 @@
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import LandingPage from './pages/landingPage'
+import MainPage from './pages/mainpage'
 
 
 
@@ -18,7 +19,8 @@ function App() {
     element: <LandingPage/>
   },
   {
-    
+    path: 'main',
+    element: < MainPage/>
     
   },
   {

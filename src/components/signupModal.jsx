@@ -1,22 +1,16 @@
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useState } from "react";
 
-const SignUpModal = ({ isOpen, onClose }) => {
+const SignUpModal = ({ isOpen, onClose,  onSignupSuccess  }) => {
   const [usePhone, setUsePhone] = useState(false);
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: "",
-    emailOrPhone: "",
-    birthDate: "",
-    password: "",
-    confirmPassword: "",
-  });
+  
+  if (!isOpen) return null;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleSignup = () => {
+      console.log("Signup successful!");
+      onSignupSuccess(); // Switch to SignIn modal
   };
-
   const nextStep = () => {
     setStep(step + 1);
   };
@@ -114,10 +108,8 @@ const SignUpModal = ({ isOpen, onClose }) => {
 
                   </div>
                   <div className="flex flex-col justify-center space-y-20 items-center w-full">
-                    <button
-                      type="submit"
-                className="w-40 h-8 bg-[#28b4f5] font-semibold text-black p-1 rounded-full"
-                    >
+                    
+                    <button type="submit" onClick={handleSignup} className="w-40 h-8 bg-[#28b4f5] font-semibold text-black p-1 rounded-full">
                       Sign Up
                     </button>
 

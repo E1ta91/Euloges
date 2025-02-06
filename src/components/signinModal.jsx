@@ -1,10 +1,12 @@
 import { X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 
 
 const SignInModal = ({ isOpen, onClose }) => {
+
     return (
-        <div>
+        <div id="signin" >
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-white/20 ">
 
@@ -39,20 +41,16 @@ const SignInModal = ({ isOpen, onClose }) => {
 
 
 
-                            <button
-                                type="submit"
-                                className="w-40 h-8 bg-[#28b4f5] font-semibold text-black p-1 rounded-full"
-                            >
+                        <Link to={'main'}>
+                        <button type="submit" className="w-40 h-8 bg-[#28b4f5] font-semibold text-black p-1 rounded-full" >
                                 Sign In
-                            </button>
-                        </form>
+                             </button>
+                        </Link>   
+                         </form>
 
-                        <button
-                            onClick={onClose}
-                            className="mt-4 text-gray-600 absolute top-24 mr-[27rem]"
-                        >
+                         <button onClick={onClose} className="mt-4 text-gray-600 absolute top-24 mr-[27rem]">
                           <X className="text-white"/>
-                        </button>
+                         </button>
                     </div>
                 </div>
             )}
