@@ -15,7 +15,7 @@ const MainPage = () => {
 
         <SideBar className='w-full lg:w-full xl:w-[35vw] ' />
 
-        <div className='md:flex ml-2.5'>
+        <div className='md:flex '>
 
         <div className="flex mx-5 flex-col justify-center  items-center space-y-10 w-full lg:w-4/4 pt-10 lg:pt-11 lg:ml-60 xl:pt-10 xl:ml-72">
           <PostForm className='w-full' />

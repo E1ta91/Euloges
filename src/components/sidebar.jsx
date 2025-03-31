@@ -62,10 +62,17 @@ const SideBar = () => {
 
                 {/* User Info */}
                 <Link to={'/profile'} className='text-black flex space-x-3 lg:space-x-5 pt-8 lg:pt-12 pl-4 lg:pl-5'>
-                    <img src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'} alt='img' onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/default-avatar.png';
-                    }} className='w-11 h-11 lg:w-12 lg:h-12 bg-gray-200 rounded-full' />
+                    <div className="relative aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-16 lg:h-16 xl:w-20 xl:h-20">
+                        <img
+                            src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
+                            alt="Profile"
+                            className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = '/default-avatar.png';
+                            }}
+                        />
+                    </div>
 
 
                     <p style={{ fontFamily: 'playfair' }} className='pt-2 text-base lg:text-lg'>{user ? user.name : "Loading..."} </p>
