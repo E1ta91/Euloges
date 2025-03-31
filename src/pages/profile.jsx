@@ -271,7 +271,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-2xl h-fit lg:h-[89vh] md:h-[85vh] bg-white mt-16 lg:mt-7 shadow-xl rounded-xl overflow-hidden">
+      <div className="w-full max-w-2xl h-[60vh] lg:h-[89vh] md:h-[85vh] bg-white mt-16 lg:mt-7 shadow-xl rounded-xl overflow-hidden">
 
         {/* Header with logo and name */}
         <div className="border-b border-gray-500">
