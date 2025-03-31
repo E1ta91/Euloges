@@ -86,7 +86,7 @@ const Profile = () => {
         // Try to use stored URLs if fetch fails
         const profileKey = getUserStorageKey('profilePicture');
         const coverKey = getUserStorageKey('coverPhoto');
-        
+
         setEditData(prev => ({
           ...prev,
           profilePicture: profileKey ? localStorage.getItem(profileKey) || prev.profilePicture : prev.profilePicture,
@@ -204,7 +204,7 @@ const Profile = () => {
             localStorage.setItem(`profilePicture_${user.id}`, editData.profilePicture);
           }
         } catch (error) {
-          
+
         }
       }
 
@@ -271,7 +271,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-2xl h-[70vh] lg:h-[89vh] md:h-[85vh] bg-white mt-16 lg:mt-7 shadow-xl rounded-xl overflow-hidden">
+      <div className="w-full max-w-2xl h-fit lg:h-[89vh] md:h-[85vh] bg-white mt-16 lg:mt-7 shadow-xl rounded-xl overflow-hidden">
 
         {/* Header with logo and name */}
         <div className="border-b border-gray-500">
@@ -288,7 +288,7 @@ const Profile = () => {
         </div>
 
         {/* Cover photo */}
-        <div className="h-32 sm:h-40 md:h-44 lg:h-48 bg-gray-50 relative">
+        <div className="h-40 sm:h-40 md:h-44 lg:h-48 bg-gray-50 relative">
           <img
             src={getImageUrl(editData.coverPhoto, '/default-cover.jpg')}
             alt="Cover"
@@ -302,7 +302,19 @@ const Profile = () => {
 
         {/* Profile section */}
         <div className="flex items-end justify-between relative px-4 pb-4">
-          <img
+
+          <div className="relative aspect-square w-24 h-24 sm:w-16 sm:h-16 md:w-20 -mt-12 sm:-mt-16 md:h-20 lg:w-16 lg:h-16 xl:w-20 xl:h-20">
+            <img
+              src={getImageUrl(editData.profilePicture, '/default-avatar.png')}
+              alt="Profile"
+              className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
+              onError={(e) => {
+                e.target.src = '/default-avatar.png';
+                console.log('Profile photo load error, using default');
+              }}
+            />
+          </div>
+          {/* <img
             src={getImageUrl(editData.profilePicture, '/default-avatar.png')}
             alt="Profile"
             className="w-24 h-24 lg:w-32 lg:h-32 rounded-full border-4 border-white relative -mt-12 sm:-mt-16 shadow-md z-10"
@@ -310,7 +322,7 @@ const Profile = () => {
               e.target.src = '/default-avatar.png';
               console.log('Profile photo load error, using default');
             }}
-          />
+          /> */}
 
           <div className="flex-1 flex justify-end">
             <button

@@ -11,7 +11,7 @@ const MainPage = () => {
   return (
     <div className='bg-[#d8d4d4] w-full h-full  flex flex-col lg:flex-row'>
 
-      <div className='flex flex-col md:flex md:flex-col xl:flex-row lg:flex-row  w-[90vw] lg:w-full'>
+      <div className='flex flex-col md:flex  xl:flex-row lg:flex-row  w-[90vw] lg:w-full'>
 
         <SideBar className='w-full lg:w-full xl:w-[35vw] ' />
 

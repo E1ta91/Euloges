@@ -4,8 +4,9 @@ import ad1 from '../assets/images/ad2.png';
 
 const Advertisement = () => {
   return (
-    <div className="   md:flex flex-col space-y-7  items-center md:items-start  md:pt-6  lg:pt-7 xl:pt-7 z">
-            <h1 style={{ fontFamily: "playfair" }} className="text-xl pt-4  text-start md:text-left">
+    <div className="   md:flex md:flex-col  mx-5 md:mx-0  space-y-7  items-center md:items-start  md:pt-6  lg:pt-7 xl:pt-7 ">
+
+            <h1 style={{ fontFamily: "playfair" }} className="text-xl pt-4   md:text-left">
               Advertisement
             </h1>
 
