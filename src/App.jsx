@@ -1,14 +1,9 @@
-
-import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import LandingPage from './pages/landingPage'
 import MainPage from './pages/mainpage'
-
-
-
-
-
-
+import ChatApp from './components/chatApp'
+import Profile from './pages/profile'
+import { UserProvider } from './context/UserContext'
 
 
 function App() {
@@ -24,24 +19,24 @@ function App() {
     
   },
   {
-   
-    
+   path: 'chat',
+   element: <ChatApp/> 
   },
   {
-   
-    
+   path: 'profile',
+   element: <Profile/> 
   },
  
  
-  
- 
-  
-
-  
+   
  ])
 
   return (
-    <RouterProvider router={router} />
+    <UserProvider>
+      <div className='font-sans'>
+        <RouterProvider router={router} />
+      </div>
+    </UserProvider>
   )
 }
 

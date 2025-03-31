@@ -1,11 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Image, Video, Music } from 'lucide-react';
+import axios from 'axios';
+import { useUser } from '../context/UserContext';
 
 const PostForm = () => {
   const [media, setMedia] = useState([]);
   const [text, setText] = useState('');
   const fileInputRef = useRef(null);
   const textAreaRef = useRef(null);
+  const { user, loading } = useUser(); // Use the shared context
 
   const handleMediaChange = (e) => {
     const files = Array.from(e.target.files);
@@ -44,24 +47,34 @@ const PostForm = () => {
   };
 
   return (
-    <div className="w-[50vw] mx-auto bg-white p-3 border-none rounded-lg shadow-lg">
-      <form className="space-y-4">
-        <div className="flex space-x-5">
-          <h1 style={{ fontFamily: 'Playfair' }} className="border w-12 h-12 pt-2 text-xl bg-sky-400 outline-none border-none font-semibold text-center rounded-full">
-            P
-          </h1>
+    <div className="lg:w-[50vw] md:w-[64.5vw] w-[90vw]  mx-auto bg-white p-3 border-none rounded-lg shadow-lg">
 
-          <div className="border border-[#7a7878] rounded-lg p-2 w-[36rem] min-h-[12vh] bg-white outline-none overflow-hidden relative">
-             <textarea
+      <form className="space-y-4">
+
+        <div className="flex space-x-5">
+          <img
+            src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
+            alt="Profile"
+            className="w-12 h-12 rounded-full"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/default-avatar.png';
+            }}
+          />
+          <div className="border border-[#7a7878] rounded-lg p-2 w-[36rem]   min-h-[12vh]  outline-none overflow-hidden ">
+
+            <textarea
               ref={textAreaRef}
               value={text}
               onChange={(e) => {
                 setText(e.target.value);
                 adjustHeight();
               }}
-              className="w-full h-auto min-h-[50px] bg-transparent outline-none resize-none"
+              className="w-full h-auto min-h-[50px] bg-white outline-none resize-none "
               placeholder="Write Something"
-            ></textarea>
+            >
+
+            </textarea>
 
             {media.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-2">
@@ -83,7 +96,7 @@ const PostForm = () => {
                       type="button"
                       onClick={() => handleMediaRemove(index)}
                       className="absolute top-0 right-0 bg-black text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-                    > 
+                    >
                       X
                     </button>
 
@@ -93,6 +106,7 @@ const PostForm = () => {
             )}
 
           </div>
+
         </div>
 
         <div className="flex justify-end space-x-2 pr-6">
@@ -105,7 +119,7 @@ const PostForm = () => {
               id="file-input"
               multiple
             />
-             <label className="cursor-pointer" onClick={() => openFileDialog('audio/*')}>
+            <label className="cursor-pointer" onClick={() => openFileDialog('audio/*')}>
               <Music className="w-5 h-5" />
             </label>
             <label className="cursor-pointer" onClick={() => openFileDialog('image/*')}>
@@ -114,14 +128,17 @@ const PostForm = () => {
             <label className="cursor-pointer" onClick={() => openFileDialog('video/*')}>
               <Video className="w-5 h-5" />
             </label>
-           
+
           </div>
 
           <button type="submit" className="w-12 h-7 bg-sky-500 text-white rounded-md">
             Post
           </button>
         </div>
+
       </form>
+
+
     </div>
   );
 };

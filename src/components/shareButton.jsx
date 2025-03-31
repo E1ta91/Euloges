@@ -10,7 +10,8 @@ const ShareButton = ({ url, text }) => {
   };
 
   return (
-    <div className="relative inline-block">
+    <div className="relative block">
+      
       <button onClick={toggleDropdown} className="relative">
         <FaShare className="w-5 h-5 " />
       </button>
@@ -44,3 +45,4 @@ const ShareButton = ({ url, text }) => {
 };
 
 export default ShareButton;
+

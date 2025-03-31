@@ -1,61 +1,134 @@
 import { X } from "lucide-react";
-import { Link } from "react-router-dom";
-
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { apiLogIn } from "../services/auth";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import Loader from "./loader";
 
 const SignInModal = ({ isOpen, onClose }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userId, setUserId] = useState(null); // Store user ID
+  const navigate = useNavigate();
 
-    return (
-        <div id="signin" >
-            {isOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-white/20 ">
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    reValidateMode: "onBlur",
+    mode: "all",
+  });
 
-                    <div className="bg-black border border-white p-6 rounded-2xl space-y-5  shadow-lg w-[35vw] h-[70vh] ">
+  // Store token in localStorage
+  const addToLocalStorage = (accessToken) => {
+    localStorage.setItem("accessToken", accessToken);
+  };
 
-                        <h1 className="text-white text-center text-5xl " style={{fontFamily: 'fleur'}}>E</h1>
-                        
-                        
+  // Fetch user details using the stored access token
+  const fetchUser = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+  
+    try {
+      const response = await fetch("https://euloges.onrender.com/getUser", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const user = await response.json();
+      console.log("User ID:", user.id);
+      setUserId(user.id); // Store in state
+      localStorage.setItem("userId", user.id); // Store in localStorage
+  
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
+  
 
-                        <form className="flex flex-col justify-center items-center">
-                        <h2 className="text-xl text-white font-semibold mb-4">Sign into Euloges</h2>
-                            <div className="mb-4">
-                                <label className="block text-sm text-white font-medium">Email</label>
-                                <input
-                                    type="email"
-                                    className="w-80 p-2 border rounded-sm border-gray-600 text-gray-200"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-white">Password</label>
-                                <input
-                                    type="password"
-                                    className="w-80 p-2 border border-gray-600 text-gray-200 rounded-sm"
-                                    placeholder="Enter your password"
-                                />
+  // Handle Login
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
 
-                                <a href="#" className="text-sm pl-[12rem]  text-white hover:underline mt-2 block">
-                                    Forgot Password?
-                                </a>
-                            </div>
+    try {
+      const res = await apiLogIn({
+        email: data.email,
+        password: data.password,
+      });
 
+      console.log("Response", res.data);
+      addToLocalStorage(res.data.accessToken);
+      toast.success(res.data.message);
 
+      // Fetch user details after login
+      await fetchUser();
 
-                        <Link to={'main'}>
-                        <button type="submit" className="w-40 h-8 bg-[#28b4f5] font-semibold text-black p-1 rounded-full" >
-                                Sign In
-                             </button>
-                        </Link>   
-                         </form>
+      setTimeout(() => {
+        navigate("/main");
+      }, 500);
 
-                         <button onClick={onClose} className="mt-4 text-gray-600 absolute top-24 mr-[27rem]">
-                          <X className="text-white"/>
-                         </button>
-                    </div>
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occurred!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div id="signin">
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white/20 p-4">
+          <div className="bg-black border border-white p-6 rounded-2xl shadow-lg w-[90%] max-w-sm sm:max-w-sm md:max-w-sm lg:max-w-md h-auto min-h-[400px] relative">
+            <button onClick={onClose} className="absolute top-4 right-4">
+              <X className="text-white w-6 h-6" />
+            </button>
+            <h1 className="text-white text-center text-5xl sm:text-6xl" style={{ fontFamily: "fleur" }}>
+              E
+            </h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-center items-center space-y-4">
+              <h2 className="text-lg sm:text-xl text-white font-semibold">Sign into Euloges</h2>
+              <div className="w-full flex justify-center">
+                <div className="w-full sm:w-80 md:w-72 lg:w-80">
+                  {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+                  <label className="block text-sm sm:text-base text-white text-start font-medium">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    className="w-full p-2 border rounded-sm border-gray-600 text-gray-200 bg-black"
+                    placeholder="Enter your email"
+                    {...register("email", { required: "Email is required" })}
+                  />
                 </div>
-            )}
+              </div>
+              <div className="w-full flex justify-center">
+                <div className="w-full sm:w-80 md:w-72 lg:w-80">
+                  <label className="block text-sm sm:text-base font-medium text-start text-white">Password</label>
+                  {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                  <input
+                    type="password"
+                    id="password"
+                    autoComplete="password"
+                    className="w-full p-2 border border-gray-600 text-gray-200 rounded-sm bg-black"
+                    placeholder="Enter your password"
+                    {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })}
+                  />
+                  <a href="#" className="text-sm sm:text-base text-white hover:underline block text-right mt-2">
+                    Forgot Password?
+                  </a>
+                </div>
+              </div>
+              <div className="w-56 sm:w-60 md:w-60 lg:w-56">
+                <button
+                  type="submit"
+                  className="w-full flex justify-center items-center h-10 sm:h-9 bg-[#28b4f5] font-semibold text-black rounded-full"
+                >
+                  {isSubmitting ? <Loader /> : "Login"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-    );
-}
+      )}
+    </div>
+  );
+};
 
 export default SignInModal;

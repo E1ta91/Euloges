@@ -1,137 +1,154 @@
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { apiSignUp } from "../services/auth";
+import { toast } from "react-toastify";
+import Loader from "./loader";
 
-const SignUpModal = ({ isOpen, onClose,  onSignupSuccess  }) => {
-  const [usePhone, setUsePhone] = useState(false);
+const SignUpModal = ({ isOpen, onClose, onSignupSuccess }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ reValidateMode: "onBlur", mode: "all" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
-  
+
+  const formatDateOfBirth = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString();
+  };
+
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('email', data.email);
+    formData.append('password', data.password);
+    formData.append('dateOfBirth', formatDateOfBirth(data.dateOfBirth));
+    
+   
+    try {
+      const res = await apiSignUp(formData);
+      toast.success("Signup successful!");
+      onSignupSuccess();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "An error occurred during signup!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (!isOpen) return null;
 
-  const handleSignup = () => {
-      console.log("Signup successful!");
-      onSignupSuccess(); // Switch to SignIn modal
-  };
-  const nextStep = () => {
-    setStep(step + 1);
-  };
-
-  const prevStep = () => {
-    setStep(step - 1);
-  };
-
   return (
-    <div>
-      {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center  bg-white/30">
+    <div className="fixed inset-0 h-full flex items-center justify-center bg-white/30 p-4">
+      <div className="bg-black border border-white p-6 rounded-2xl shadow-lg w-[90%] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md xl:max-w-md min-h-[450px] h-auto relative space-y-6">
+        <button onClick={onClose} className="absolute top-4 right-4">
+          <X className="text-white w-6 h-6" />
+        </button>
 
-          <div className="bg-black p-6 border border-white rounded-2xl space-y-6 shadow-lg w-[38vw] h-[80vh]">
+        <h1 className="text-white text-center text-5xl sm:text-6xl" style={{ fontFamily: "fleur" }}>
+          E
+        </h1>
 
-            <h1 className="text-white text-center text-5xl" style={{ fontFamily: 'fleur' }}>E</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="text-white flex flex-col justify-center items-center space-y-4">
+          <h2 className="text-lg sm:text-xl font-semibold">Create Your Account</h2>
 
-            <form className="text-white flex flex-col justify-center items-center">
-              <h2 className="text-xl font-semibold mb-4">Create Your Account</h2>
+          {step === 1 && (
+            <>
+              <div className="w-full max-w-xs sm:max-w-sm md:max-w-xs text-left space-y-2">
+                <label htmlFor="name" className="block text-sm sm:text-base font-medium">Name</label>
+                <input
+                  id="name"
+                  type="text"
+                  {...register("name", { required: "Name is required" })}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-black text-gray-200"
+                  placeholder="Enter your name"
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+              </div>
 
-              {step === 1 && (
-                <>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium">Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      className="w-[22rem] h-12 p-2 border border-gray-600 rounded-md"
-                      placeholder="Enter your name"
-                    />
-                  </div>
-                  <div className="mb-4 flex flex-col">
+              <div className="w-full max-w-xs sm:max-w-sm md:max-w-xs space-y-2">
+                <label htmlFor="email" className="block text-sm sm:text-base font-medium text-left">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  {...register("email", { 
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
+                  })}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-black text-gray-200"
+                  placeholder="Enter your email"
+                />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+              </div>
 
-                    <label className="block text-sm font-medium">
-                      {usePhone ? "Phone Number" : "Email"}
-                    </label>
+              <div className="w-full max-w-xs sm:max-w-sm md:max-w-xs space-y-2">
+                <label htmlFor="dateOfBirth" className="block text-sm sm:text-base font-medium text-left">Date of Birth</label>
+                <input
+                  id="dateOfBirth"
+                  type="date"
+                  {...register("dateOfBirth", { required: "Date of Birth is required" })}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-black text-gray-200"
+                />
+                {errors.dateOfBirth && <p className="text-red-500 text-sm">{errors.dateOfBirth.message}</p>}
+              </div>
 
-                    <input
-                      type={usePhone ? "tel" : "email"}
-                      name="emailOrPhone"
-                      className="w-[22rem] h-12 p-2 border border-gray-600 rounded-md"
-                      placeholder={usePhone ? "Enter your phone number" : "Enter your email"}
-                    />
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="flex items-center justify-center text-white rounded-full w-8 h-8 bg-[#28b4f5]"
+              >
+                <ArrowRight />
+              </button>
+            </>
+          )}
 
-                    <button
-                      type="button"
-                      className="text-sm text-blue-400 mt-2 pl-[10rem]"
-                      onClick={() => setUsePhone(!usePhone)}
-                    >
-                      {usePhone ? "Use email instead" : "Use phone number instead"}
-                    </button>
+          {step === 2 && (
+            <>
+              <div className="w-72 max-w-xs sm:max-w-sm md:max-w-sm space-y-2">
+                <label htmlFor="password" className="block text-sm sm:text-base text-start font-medium">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  {...register("password", { 
+                    required: "Password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters"
+                    }
+                  })}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-black text-gray-200"
+                  placeholder="Enter your password"
+                />
+                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+              </div>
 
-                  </div>
+              <div className="flex flex-col justify-between items-center space-y-6 w-full pt-3 max-w-xs sm:max-w-sm md:max-w-md">
+                <button
+                  type="submit"
+                  className="text-center xl:h-7 flex justify-center items-center w-28 h-9 bg-[#28b4f5] font-semibold text-black rounded-full"
+                >
+                  {isSubmitting ? <Loader /> : "Sign Up"}
+                </button>
 
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium">Date of Birth</label>
-                    <input
-                      type="date"
-                      name="date"
-                      className="w-[22rem] h-12 p-2 border border-gray-600 rounded-md"
-                      placeholder="Enter your birth date"
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={nextStep}
-                    className="  text-white rounded-md" >
-                    <ArrowRight/>
-                  </button>
-                </>
-              )}
-
-
-              {step === 2 && (
-                <>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium">Password</label>
-                    <input
-                      type="password"
-                      name="password"
-                      className="w-[22rem] h-12 p-2 border border-gray-600 rounded-md"
-                      placeholder="Enter your password"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium">Confirm Password</label>
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      className="w-[22rem] h-12 p-2 border border-gray-600 rounded-md"
-                      placeholder="Confirm your password"
-                    />
-
-                  </div>
-                  <div className="flex flex-col justify-center space-y-20 items-center w-full">
-                    
-                    <button type="submit" onClick={handleSignup} className="w-40 h-8 bg-[#28b4f5] font-semibold text-black p-1 rounded-full">
-                      Sign Up
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={prevStep}
-                      className=" text-white "
-                    >
-                      <ArrowLeft/>
-                    </button>
-                  </div>
-
-                  
-                </>
-              )}
-            </form>
-            <button onClick={onClose} className="mt-4 text-gray-600 absolute top-16 mr-[27rem]">
-              <X className="text-white" />
-            </button>
-          </div>
-        </div>
-      )}
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="flex items-center justify-center text-white rounded-full w-8 h-8 bg-gray-600"
+                >
+                  <ArrowLeft />
+                </button>
+              </div>
+            </>
+          )}
+        </form>
+      </div>
     </div>
   );
 };
