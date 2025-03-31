@@ -15,7 +15,7 @@ const DrawerProfile = () => {
                         e.target.onerror = null;
                         e.target.src = '/default-avatar.png';
                     }}  className=' w-12 h-12 bg-gray-100 rounded-full'/>
-            <p style={{ fontFamily: 'playfair' }} className='pt-2 text-lg whitespace-nowrap'> {user?.name || "User"} </p>
+            <p style={{ fontFamily: 'playfair' }} className='pt-2 text-lg whitespace-nowrap'> {user ? user.name : "Loading..."} </p>
         </Link>
     );
 };
