@@ -9,7 +9,7 @@ import Advertisement from '../components/advertisement';
 const MainPage = () => {
 
   return (
-    <div className='bg-[#d8d4d4] w-full h-full  flex flex-col lg:flex-row'>
+    <div className='bg-[#e4f3f2] w-full h-full  flex flex-col lg:flex-row'>
 
       <div className='flex flex-col md:flex  xl:flex-row lg:flex-row  w-[90vw] lg:w-full'>
 

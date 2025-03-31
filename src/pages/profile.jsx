@@ -295,7 +295,7 @@ const Profile = () => {
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.src = '/default-cover.jpg';
-              console.log('Cover photo load error, using default');
+             
             }}
           />
         </div>
@@ -310,7 +310,6 @@ const Profile = () => {
               className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
               onError={(e) => {
                 e.target.src = '/default-avatar.png';
-                console.log('Profile photo load error, using default');
               }}
             />
           </div>
