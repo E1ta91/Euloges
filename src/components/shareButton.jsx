@@ -10,14 +10,15 @@ const ShareButton = ({ url, text }) => {
   };
 
   return (
-    <div className="relative block">
+    <div className=" block">
       
-      <button onClick={toggleDropdown} className="relative">
+      <button onClick={toggleDropdown} className="">
         <FaShare className="w-5 h-5 " />
       </button>
 
+
       {isOpen && (
-        <div className="absolute top-8 right-0 bg-white border rounded-lg shadow-lg p-2 flex  space-x-4">
+        <div className=" bg-white border rounded-lg shadow-lg p-2  flex  space-x-4">
           <FacebookShareButton url={url} quote={text}>
             <div className="flex items-center space-x-2">
               <FaFacebook className="w-5 h-5 text-blue-600" />

@@ -366,7 +366,7 @@ const Profile = () => {
 
                   {/* Cover photo upload */}
                   <div className="relative">
-                    <div className="h-32 sm:h-40 md:h-44 lg:h-48 bg-gray-100 rounded-lg overflow-hidden mb-2">
+                    <div className="h-32 sm:h-40 md:h-44 lg:h-52 bg-gray-100 rounded-lg overflow-hidden mb-2">
                       <img
                         src={getImageUrl(editData.coverPhoto, '/default-cover.jpg')}
                         alt="Cover"

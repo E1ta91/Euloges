@@ -47,20 +47,16 @@ const PostForm = () => {
   };
 
   return (
-    <div className="lg:w-[50vw] md:w-[64.5vw] w-[90vw]  mx-auto bg-white p-3 border-none rounded-lg shadow-lg">
+    <div className="lg:w-[50vw] md:w-[64.5vw] w-[90vw]   mx-auto bg-white p-3 border-none rounded-lg shadow-lg">
 
       <form className="space-y-4">
 
         <div className="flex space-x-3">
-          <div className="relative aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
+          <div className=" aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-16  md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
             <img
               src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
               alt="Profile"
-              className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/default-avatar.png';
-              }}
+              className=" inset-0 w-full h-full rounded-full  object-cover border-2 border-white/80 shadow-sm"
             />
           </div>
           <div className="border border-[#7a7878] rounded-lg p-2 w-[36rem]   min-h-[12vh]  outline-none overflow-hidden ">

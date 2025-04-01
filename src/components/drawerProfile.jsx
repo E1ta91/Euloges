@@ -16,10 +16,10 @@ const DrawerProfile = () => {
               src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
               alt="Profile"
               className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/default-avatar.png';
-              }}
+              // onError={(e) => {
+              //   e.target.onerror = null;
+              //   e.target.src = '/default-avatar.png';
+              // }}
             />
           </div>
             <p style={{ fontFamily: 'playfair' }} className='pt-2 text-lg whitespace-nowrap'> {user ? user.name : "Loading..."} </p>
