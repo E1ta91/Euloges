@@ -288,40 +288,27 @@ const Profile = () => {
         </div>
 
         {/* Cover photo */}
-        <div className="h-40 sm:h-40 md:h-44 lg:h-48 bg-gray-50 relative">
+        <div className="h-40 md:h-48  bg-gray-50 relative">
           <img
             src={getImageUrl(editData.coverPhoto, '/default-cover.jpg')}
             alt="Cover"
             className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.src = '/default-cover.jpg';
-             
-            }}
+
           />
         </div>
 
         {/* Profile section */}
         <div className="flex items-end justify-between relative px-4 pb-4">
 
-          <div className="relative aspect-square w-24 h-24 sm:w-16 sm:h-16 md:w-20 -mt-12 sm:-mt-16 md:h-20 lg:w-16 lg:h-16 xl:w-20 xl:h-20">
+          <div className="relative aspect-square w-24 h-24 sm:w-16 sm:h-16 md:w-20 -mt-12 sm:-mt-16 md:h-20 lg:w-28 lg:h-28 ">
             <img
               src={getImageUrl(editData.profilePicture, '/default-avatar.png')}
               alt="Profile"
               className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
-              onError={(e) => {
-                e.target.src = '/default-avatar.png';
-              }}
+
             />
           </div>
-          {/* <img
-            src={getImageUrl(editData.profilePicture, '/default-avatar.png')}
-            alt="Profile"
-            className="w-24 h-24 lg:w-32 lg:h-32 rounded-full border-4 border-white relative -mt-12 sm:-mt-16 shadow-md z-10"
-            onError={(e) => {
-              e.target.src = '/default-avatar.png';
-              console.log('Profile photo load error, using default');
-            }}
-          /> */}
+
 
           <div className="flex-1 flex justify-end">
             <button
@@ -366,7 +353,7 @@ const Profile = () => {
 
                   {/* Cover photo upload */}
                   <div className="relative">
-                    <div className="h-32 sm:h-40 md:h-44 lg:h-52 bg-gray-100 rounded-lg overflow-hidden mb-2">
+                    <div className="h-32  md:h-48  bg-gray-100 rounded-lg overflow-hidden mb-2">
                       <img
                         src={getImageUrl(editData.coverPhoto, '/default-cover.jpg')}
                         alt="Cover"

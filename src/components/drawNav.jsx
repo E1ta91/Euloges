@@ -1,16 +1,30 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const DrawNav = ({ path, label, setIsOpen, setIsModalOpen }) => {
+const DrawNav = ({ 
+  path, 
+  label, 
+  setIsOpen, 
+  setIsModalOpen, 
+  setIsNotificationModalOpen,
+  setIsSearchBarModalOpen 
+}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (setIsModalOpen) {
+    // Close the mobile drawer first
+    setIsOpen(false);
+    
+    // Handle different modal types
+    if (label === 'Messages') {
       setIsModalOpen(true);
+    } else if (label === 'Notification') {
+      setIsNotificationModalOpen(true);
+    } else if (label === 'Explore') {
+      setIsSearchBarModalOpen(true);
     } else if (path) {
       navigate(path);
     }
-    setIsOpen(false);
   };
 
   return (

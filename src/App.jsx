@@ -4,6 +4,7 @@ import MainPage from './pages/mainpage'
 import ChatApp from './components/chatApp'
 import Profile from './pages/profile'
 import { UserProvider } from './context/UserContext'
+import UserProfile from './pages/userProfile'
 
 
 function App() {
@@ -26,11 +27,11 @@ function App() {
    path: 'profile',
    element: <Profile/> 
   },
- 
   {
-    path:"profile/id", 
-    element: <Profile />
+   path: 'profile/:id',
+   element: <UserProfile/> 
   },
+ 
  
  
    

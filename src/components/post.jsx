@@ -134,18 +134,14 @@ const Post = () => {
           <div className="bg-white w-full lg:max-w-[50vw] md:max-w-[65vw] h-auto rounded-lg space-y-6 p-4">
 
             <div className="flex space-x-4 pt-4 ">
-              <div className="aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
+              <div className="aspect-square w-14 h-14  md:h-20 md:w-20">
                 <img
                   src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
                   alt="Profile"
                   className=" inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
-                  // onError={(e) => {
-                  //   e.target.onerror = null;
-                  //   e.target.src = '/default-avatar.png';
-                  // }}
                 />
               </div>
-              <h1 className="text-lg font font-semibold pt-3">{user ? user.name : "Loading..."}</h1>
+              <h1 className="text-lg font font-semibold pt-6">{user ? user.name : "Loading..."}</h1>
             </div>
 
             <p className="pl-6 ">{post.comment}</p>
