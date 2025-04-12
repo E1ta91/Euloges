@@ -11,14 +11,20 @@ const DrawerProfile = () => {
 
     return (
         <Link to={'/profile'} className='text-black flex space-x-5 pt-12 pl-5 '>
-            <div className="relative aspect-square w-14 h-14 md:h-16 md:w-16">
-            <img
-              src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
-              alt="Profile"
-              className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
-            />
-          </div>
-            <p style={{ fontFamily: 'playfair' }} className='pt-4 text-lg whitespace-nowrap'> {user ? user.name : "Loading..."} </p>
+            <div className="aspect-square w-14 h-14 md:h-16 md:w-16">
+                        {loading ? (
+                            <div className="w-full h-full rounded-full bg-gray-200 animate-pulse"></div>
+                        ) : (
+                            <img
+                                src={user?.profilePicture || '/default-avatar.png'}
+                                alt="Profile"
+                                className="w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
+                            />
+                        )}
+                    </div>
+                    <p style={{ fontFamily: 'playfair' }} className='text-base pt-4 lg:text-lg'>
+                        {loading ? "Loading..." : user?.name || "Guest"}
+                    </p>
         </Link>
     );
 };

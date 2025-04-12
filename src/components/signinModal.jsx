@@ -8,7 +8,7 @@ import Loader from "./loader";
 
 const SignInModal = ({ isOpen, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userId, setUserId] = useState(null); // Store user ID
+  const [userid, setUserid] = useState(null); // Store user ID
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -34,7 +34,8 @@ const SignInModal = ({ isOpen, onClose }) => {
   
       const user = await response.json();
       console.log("User ID:", user.id);
-      setUserId(user.id); // Store in state
+      console.log("user", user)
+      setUserid(user.id); // Store in state
       localStorage.setItem("userId", user.id); // Store in localStorage
   
     } catch (error) {

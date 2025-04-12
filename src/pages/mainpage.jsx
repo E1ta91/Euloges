@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SideBar from '../components/sidebar';
 import PostForm from './postform';
 import Post from '../components/post';
@@ -7,6 +7,14 @@ import Advertisement from '../components/advertisement';
 
 
 const MainPage = () => {
+  const [posts, setPosts] = useState([]);
+  const [triggerRefresh, setTriggerRefresh] = useState(false);
+
+  // Callback when a new post is created
+  const handleNewPost = (newPost) => {
+    setTriggerRefresh(prev => !prev); // Toggle to trigger refresh
+  };
+
 
   return (
     <div className='bg-[#e4f3f2] w-full h-full  flex flex-col lg:flex-row'>
@@ -17,12 +25,14 @@ const MainPage = () => {
 
         <div className='md:flex '>
 
-        <div className="flex mx-5 flex-col justify-center  items-center space-y-10 w-full lg:w-4/4 pt-10 lg:pt-11 lg:ml-60 xl:pt-10 xl:ml-72">
-          <PostForm className='w-full ' />
-          <Post className='w-full ' />
-        </div>
+          <div className="flex mx-5 flex-col justify-center  items-center space-y-10 w-full lg:w-4/4 pt-10 lg:pt-8.5 lg:ml-60 xl:pt-10 xl:ml-72">
+            <PostForm onNewPost={handleNewPost} className='w-full ' />
+            <Post posts={posts}
+              setPosts={setPosts}
+              triggerRefresh={triggerRefresh} className='w-full ' />
+          </div>
 
-         <Advertisement className='w-full  md:w-full'  /> 
+          <Advertisement className='w-full  md:w-full' />
         </div>
 
       </div>

@@ -14,7 +14,7 @@ const SideBar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
     const [isSearchBarModalOpen, setIsSearchBarModalOpen] = useState(false);
-    const { user } = useUser(); // Destructure user from the context
+    const { user, loading } = useUser(); // Get user and loading from context
 
     return (
         <div>
@@ -45,32 +45,30 @@ const SideBar = () => {
                                         {navlink.text}
                                     </NavLink>
                                 )}
-                                
                         </div>
                     </div>
-
-                    
                 ))}
-                 {/* Modals */}
-                 {isModalOpen && <MessageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+                
+                {/* Modals */}
+                {isModalOpen && <MessageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
                 {isNotificationModalOpen && <NotificationModal isOpen={isNotificationModalOpen} onClose={() => setIsNotificationModalOpen(false)} />}
                 {isSearchBarModalOpen && <SearchBar isOpen={isSearchBarModalOpen} onClose={() => setIsSearchBarModalOpen(false)} />}
 
                 {/* User Info - Desktop */}
                 <Link to={'/profile'} className='text-black flex space-x-3 lg:space-x-5 pt-8 lg:pt-12 pl-4 lg:pl-5 items-center'>
                     <div className="aspect-square w-14 h-14 md:h-16 md:w-16">
-                        <img
-                            src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
-                            alt="Profile"
-                            className="w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = '/default-avatar.png';
-                            }}
-                        />
+                        {loading ? (
+                            <div className="w-full h-full rounded-full bg-gray-200 animate-pulse"></div>
+                        ) : (
+                            <img
+                                src={user?.profilePicture || '/default-avatar.png'}
+                                alt="Profile"
+                                className="w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
+                            />
+                        )}
                     </div>
                     <p style={{ fontFamily: 'playfair' }} className='text-base lg:text-lg'>
-                        {user?.name || "Loading..."}
+                        {loading ? "Loading..." : user?.name || "Guest"}
                     </p>
                 </Link>
             </div>
@@ -79,7 +77,6 @@ const SideBar = () => {
             <div className="lg:hidden w-[100vw] overflow-y-hidden flex justify-between items-center bg-black text-white p-4">
                 <div className="flex items-center space-x-3">
                     <h1 className="text-5xl text-white" style={{ fontFamily: 'fleur' }}>E</h1>
-                   
                 </div>
                 
                 <button onClick={() => setIsOpen(!isOpen)} className="text-white">

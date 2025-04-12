@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
 const Profile = () => {
-  const { user: contextUser, updateUserProfile } = useUser();
+  const { user: updateUserProfile } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -19,11 +19,6 @@ const Profile = () => {
     following: 0,
     followers: 0
   });
-
-  // Helper function to get user-specific localStorage key
-  const getUserStorageKey = (key) => {
-    return user?.id ? `${key}_${user.id}` : null;
-  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,16 +41,10 @@ const Profile = () => {
           throw new Error("User ID not found in response");
         }
 
-        // Get user-specific stored images
-        const profileKey = `profilePicture_${response.data.id}`;
-        const coverKey = `coverPhoto_${response.data.id}`;
-        const storedProfile = localStorage.getItem(profileKey);
-        const storedCover = localStorage.getItem(coverKey);
-
         const userData = {
           ...response.data,
-          profilePicture: response.data.profilePicture || storedProfile || '/default-avatar.png',
-          coverPhoto: response.data.coverPhoto || storedCover || '/default-cover.jpg'
+          profilePicture: response.data.profilePicture || '/default-avatar.png',
+          coverPhoto: response.data.coverPhoto || '/default-cover.jpg'
         };
 
         console.log('Processed user data with images:', userData);
@@ -73,24 +62,12 @@ const Profile = () => {
           followers: userData.followers?.length || 0
         });
 
-        // Store the Cloudinary URLs in localStorage with user-specific keys
-        if (userData.profilePicture && !userData.profilePicture.includes('default-avatar')) {
-          localStorage.setItem(profileKey, userData.profilePicture);
-        }
-        if (userData.coverPhoto && !userData.coverPhoto.includes('default-cover')) {
-          localStorage.setItem(coverKey, userData.coverPhoto);
-        }
-
       } catch (error) {
         console.error("Error fetching user:", error);
-        // Try to use stored URLs if fetch fails
-        const profileKey = getUserStorageKey('profilePicture');
-        const coverKey = getUserStorageKey('coverPhoto');
-
         setEditData(prev => ({
           ...prev,
-          profilePicture: profileKey ? localStorage.getItem(profileKey) || prev.profilePicture : prev.profilePicture,
-          coverPhoto: coverKey ? localStorage.getItem(coverKey) || prev.coverPhoto : prev.coverPhoto
+          profilePicture: '/default-avatar.png',
+          coverPhoto: '/default-cover.jpg'
         }));
         alert(error.message);
       } finally {
@@ -119,6 +96,7 @@ const Profile = () => {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', 'system_uploader_1e2ddab171f769b9_caf184a04c894aa697fa85573829881354');
+      formData.append('folder', 'profile_pictures'); // Specify the folder
 
       const response = await axios.post(
         'https://api.cloudinary.com/v1_1/dhywsn6jz/image/upload',
@@ -162,11 +140,6 @@ const Profile = () => {
         [fieldName]: imageUrl
       });
 
-      // Update localStorage with user-specific key
-      if (user?.id) {
-        localStorage.setItem(`${fieldName}_${user.id}`, imageUrl);
-      }
-
       if (user) {
         setUser(prev => ({
           ...prev,
@@ -188,49 +161,24 @@ const Profile = () => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append('email', editData.email);
-      formData.append('name', editData.name);
-      formData.append('dateOfBirth', editData.dateOfBirth?.split('T')[0] || '');
+      // Create a regular object to send as JSON
+      const updateData = {
+        email: editData.email,
+        name: editData.name,
+        dateOfBirth: editData.dateOfBirth?.split('T')[0] || '',
+        profilePicture: editData.profilePicture !== '/default-avatar.png' ? editData.profilePicture : null,
+        coverPhoto: editData.coverPhoto !== '/default-cover.jpg' ? editData.coverPhoto : null
+      };
 
-      // Handle profile picture
-      if (editData.profilePicture && editData.profilePicture !== '/default-avatar.png') {
-        try {
-          const profileResponse = await fetch(editData.profilePicture);
-          const profileBlob = await profileResponse.blob();
-          const profileFile = new File([profileBlob], 'profile.jpg', { type: 'image/jpeg' });
-          formData.append('profilePicture', profileFile);
-          if (user?.id) {
-            localStorage.setItem(`profilePicture_${user.id}`, editData.profilePicture);
-          }
-        } catch (error) {
-
-        }
-      }
-
-      // Handle cover photo
-      if (editData.coverPhoto && editData.coverPhoto !== '/default-cover.jpg') {
-        try {
-          const coverResponse = await fetch(editData.coverPhoto);
-          const coverBlob = await coverResponse.blob();
-          const coverFile = new File([coverBlob], 'cover.jpg', { type: 'image/jpeg' });
-          formData.append('coverPhoto', coverFile);
-          if (user?.id) {
-            localStorage.setItem(`coverPhoto_${user.id}`, editData.coverPhoto);
-          }
-        } catch (error) {
-          console.error('Error processing cover photo:', error);
-        }
-      }
-
-      console.log('Sending update with form data:', Object.fromEntries(formData.entries()));
+      console.log('Sending update with data:', updateData);
+    
 
       const response = await axios.patch(
         `https://euloges.onrender.com/updateUser/${editData.id}`,
-        formData,
+        updateData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           }
         }
@@ -243,7 +191,7 @@ const Profile = () => {
         const updatedData = {
           ...response.data,
           profilePicture: editData.profilePicture,
-          coverPhoto: editData.coverPhoto
+          // coverPhoto: editData.coverPhoto
         };
         setUser(updatedData);
         setEditData(prev => ({
@@ -257,16 +205,6 @@ const Profile = () => {
       const errorMessage = error.response?.data?.message || "Failed to update profile";
       alert(errorMessage);
     }
-  };
-
-  // Helper function to convert data URL to File object
-  const urlToFile = async (url, filename) => {
-    if (url.startsWith('data:')) {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new File([blob], filename, { type: blob.type });
-    }
-    return null;
   };
 
   return (
@@ -293,22 +231,18 @@ const Profile = () => {
             src={getImageUrl(editData.coverPhoto, '/default-cover.jpg')}
             alt="Cover"
             className="w-full h-full object-cover"
-
           />
         </div>
 
         {/* Profile section */}
         <div className="flex items-end justify-between relative px-4 pb-4">
-
           <div className="relative aspect-square w-24 h-24 sm:w-16 sm:h-16 md:w-20 -mt-12 sm:-mt-16 md:h-20 lg:w-28 lg:h-28 ">
             <img
               src={getImageUrl(editData.profilePicture, '/default-avatar.png')}
               alt="Profile"
               className="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
-
             />
           </div>
-
 
           <div className="flex-1 flex justify-end">
             <button
@@ -350,7 +284,6 @@ const Profile = () => {
                 )}
 
                 <div className='space-y-6 sm:space-y-8'>
-
                   {/* Cover photo upload */}
                   <div className="relative">
                     <div className="h-32  md:h-48  bg-gray-100 rounded-lg overflow-hidden mb-2">
