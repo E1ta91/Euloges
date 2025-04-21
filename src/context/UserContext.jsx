@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.log("No token found");
+        setUser(null);
         setLoading(false);
         return;
       }
@@ -23,21 +23,29 @@ export const UserProvider = ({ children }) => {
       setUser(response.data);
     } catch (error) {
       console.error("Error fetching user:", error);
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const updateUserProfile = (newData) => {
-    setUser(prev => ({
-      ...prev,
-      ...newData
-    }));
-  };
+  // Sync user when token changes (e.g., login/logout)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      fetchUser(); // Re-fetch when token updates
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
+  // Initial fetch
   useEffect(() => {
     fetchUser();
   }, []);
+
+  const updateUserProfile = (newData) => {
+    setUser(prev => ({ ...prev, ...newData }));
+  };
 
   return (
     <UserContext.Provider value={{ user, loading, fetchUser, updateUserProfile }}>
@@ -46,10 +54,4 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
-};
+export const useUser = () => useContext(UserContext);

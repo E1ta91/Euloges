@@ -5,10 +5,12 @@ import { apiLogIn } from "../services/auth";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import Loader from "./loader";
+import { useUser } from "../context/UserContext";
 
 const SignInModal = ({ isOpen, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userid, setUserid] = useState(null); // Store user ID
+  const { fetchUser } = useUser(); // Get fetchUser from context
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -17,57 +19,48 @@ const SignInModal = ({ isOpen, onClose }) => {
   });
 
   // Store token in localStorage
-  const addToLocalStorage = (accessToken) => {
-    localStorage.setItem("accessToken", accessToken);
-  };
+  // const addToLocalStorage = (accessToken) => {
+  //   localStorage.setItem("accessToken", accessToken);
+  // };
 
   // Fetch user details using the stored access token
-  const fetchUser = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
+  // const fetchUser = async () => {
+  //   const token = localStorage.getItem("accessToken");
+  //   if (!token) return;
   
-    try {
-      const response = await fetch("https://euloges.onrender.com/getUser", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  //   try {
+  //     const response = await fetch("https://euloges.onrender.com/getUser", {
+  //       method: "GET",
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
   
-      const user = await response.json();
-      console.log("User ID:", user.id);
-      console.log("user", user)
-      setUserid(user.id); // Store in state
-      localStorage.setItem("userId", user.id); // Store in localStorage
+  //     const user = await response.json();
+  //     console.log("User ID:", user.id);
+  //     console.log("user", user)
+  //     setUserid(user.id); // Store in state
+  //     localStorage.setItem("userId", user.id); // Store in localStorage
   
-    } catch (error) {
-      console.error("Error fetching user:", error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error("Error fetching user:", error);
+  //   }
+  // };
   
 
   // Handle Login
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-
     try {
       const res = await apiLogIn({
         email: data.email,
         password: data.password,
       });
 
-      console.log("Response", res.data);
-      addToLocalStorage(res.data.accessToken);
+      localStorage.setItem("accessToken", res.data.accessToken);
+      await fetchUser(); // Critical: Wait for user data to load
       toast.success(res.data.message);
-
-      // Fetch user details after login
-      await fetchUser();
-
-      setTimeout(() => {
-        navigate("/main");
-      }, 500);
-
+      navigate("/main"); // Redirect AFTER data is ready
     } catch (error) {
-      console.log(error);
-      toast.error("An error occurred!");
+      toast.error(error.response?.data?.message || "Login failed!");
     } finally {
       setIsSubmitting(false);
     }

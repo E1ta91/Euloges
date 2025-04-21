@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SearchIcon, X } from "lucide-react";
+import { Plus, SearchIcon, X } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const SearchBar = ({ isOpen, onClose }) => {
@@ -10,6 +10,9 @@ const SearchBar = ({ isOpen, onClose }) => {
     const [allUsers, setAllUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+
+   
+
 
     // Fetch all users when component mounts
     useEffect(() => {
@@ -89,36 +92,41 @@ const SearchBar = ({ isOpen, onClose }) => {
 
                 <div className="w-full mt-5 px-5">
                     {results.length > 0 ? (
+
                         <ul className="space-y-4">
                             {results.map((user, index) => (
                                 <li key={index} className="flex items-center space-x-5 border-b border-slate-400 p-3 rounded-lg hover:bg-gray-800 transition-colors">
-                                    <Link 
-                                        to={`/profile/${user.id}`} 
-                                        className="flex items-center space-x-5 w-full"
+                                    <Link
+                                        to={`/profile/${user.id}`}
+                                        className="flex items-center space-x-3 md:space-x-5 w-full"
                                         onClick={onClose}
                                     >
-                                        <div className="aspect-square w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-16 lg:h-16 xl:w-20 xl:h-20">
+                                        <div className="aspect-square w-12 h-12 sm:w-16 sm:h-16 md:w-16 md:h-16 lg:w-16 lg:h-16 xl:w-20 xl:h-20">
                                             <img
-                                                src={user?.profilePicture || (user?.id && localStorage.getItem(`profilePicture_${user.id}`)) || '/default-avatar.png'}
+                                                src={user.profilePicture}
                                                 alt="profile"
                                                 className="inset-0 w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
                                             />
                                         </div>
 
-                                        <div>
-                                            <span className="text-lg block">{user.name}</span>
-                                            <span className="text-sm text-gray-400">
-                                                Followers: {user.followers?.length || 0} • Following: {user.following?.length || 0}
-                                            </span>
+                                        <div className="text-sm sm:text-md md:text-lg lg:text-xl xl:text-2xl block">
+                                            <span>{user.name}</span>
                                         </div>
                                     </Link>
+
+                                    <button  className='flex lg:text-lg text-md text-[#28B4F5]'>
+                                        <Plus size={24} /> Follow
+                                    </button>
                                 </li>
                             ))}
                         </ul>
+
                     ) : query && !isLoading ? (
                         <p className="text-gray-400 mt-4">No results found.</p>
                     ) : null}
                 </div>
+
+
             </div>
         </div>
     );

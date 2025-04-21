@@ -65,7 +65,7 @@ const Post = ({ posts, setPosts, triggerRefresh }) => {
 
       const response = await axios.get(`https://euloges.onrender.com/getUser?id=${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
-        timeout: 5000
+        timeout: 10000
       });
 
       if (!response.data) {

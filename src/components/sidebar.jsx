@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import K from '../constants';
 import Drawer from './drawer';
@@ -8,13 +8,49 @@ import MessageModal from './messageModal';
 import NotificationModal from './notificationModal';
 import SearchBar from './searchBar';
 import { useUser } from '../context/UserContext';
+import axios from 'axios';
 
 const SideBar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+    const navigate = useNavigate();
     const [isSearchBarModalOpen, setIsSearchBarModalOpen] = useState(false);
     const { user, loading } = useUser(); // Get user and loading from context
+    const handleLogout = async () => {
+        try {
+            // Retrieve the access token from localStorage (or wherever it's stored)
+            const accessToken = localStorage.getItem('accessToken');
+        
+            // Send a request to the logout endpoint with the access token in the headers
+            await axios.post(
+                'https://euloges.onrender.com/logout',
+                {}, // Request body (empty in this case)
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Add the token to the Authorization header
+                    },
+                }
+            );
+
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("user");
+            localStorage.removeItem("user_[object Object]")
+    
+            // Log success message to the console
+            console.log('Logout successful');
+    
+            // Show a success message to the user
+            alert('Logout successfully');
+    
+            // Redirect to the login page or home page
+            navigate('/');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            alert('Failed to logout. Please try again.');
+        }
+    };
 
     return (
         <div>
@@ -40,6 +76,13 @@ const SideBar = () => {
                                     <Link onClick={() => setIsSearchBarModalOpen(true)} className='text-[#464444] text-md lg:text-md hover:text-black transition-colors'>
                                         {navlink.text}
                                     </Link>
+                                ) : navlink.text === 'Logout' ? (
+                                    <button
+                                        onClick={handleLogout}
+                                        className='text-[#464444] text-md lg:text-md hover:text-black transition-colors'
+                                    >
+                                        {navlink.text}
+                                    </button>
                                 ) : (
                                     <NavLink to={navlink.path} className='text-[#464444] text-md lg:text-md hover:text-black transition-colors'>
                                         {navlink.text}
@@ -48,7 +91,7 @@ const SideBar = () => {
                         </div>
                     </div>
                 ))}
-                
+
                 {/* Modals */}
                 {isModalOpen && <MessageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
                 {isNotificationModalOpen && <NotificationModal isOpen={isNotificationModalOpen} onClose={() => setIsNotificationModalOpen(false)} />}
@@ -61,14 +104,14 @@ const SideBar = () => {
                             <div className="w-full h-full rounded-full bg-gray-200 animate-pulse"></div>
                         ) : (
                             <img
-                                src={user?.profilePicture || '/default-avatar.png'}
+                                src={user.profilePicture || '/default-avatar.png'}
                                 alt="Profile"
                                 className="w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
                             />
                         )}
                     </div>
                     <p style={{ fontFamily: 'playfair' }} className='text-base lg:text-lg'>
-                        {loading ? "Loading..." : user?.name || "Guest"}
+                        {loading ? "Loading..." : user.name || "Guest"}
                     </p>
                 </Link>
             </div>
@@ -78,7 +121,7 @@ const SideBar = () => {
                 <div className="flex items-center space-x-3">
                     <h1 className="text-5xl text-white" style={{ fontFamily: 'fleur' }}>E</h1>
                 </div>
-                
+
                 <button onClick={() => setIsOpen(!isOpen)} className="text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
                         <path fillRule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
@@ -90,7 +133,7 @@ const SideBar = () => {
                     <DrawNav label="Explore" setIsOpen={setIsOpen} setIsSearchBarModalOpen={setIsSearchBarModalOpen} />
                     <DrawNav label="Notification" setIsOpen={setIsOpen} setIsNotificationModalOpen={setIsNotificationModalOpen} />
                     <DrawNav label="Messages" setIsOpen={setIsOpen} setIsModalOpen={setIsModalOpen} />
-                    <DrawNav path="/" label="Logout" setIsOpen={setIsOpen} />
+                    <DrawNav path={handleLogout} label="Logout" setIsOpen={setIsOpen} />
                     <DrawerProfile />
                 </Drawer>
 

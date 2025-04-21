@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +11,40 @@ const DrawNav = ({
   setIsSearchBarModalOpen 
 }) => {
   const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+        // Retrieve the access token from localStorage (or wherever it's stored)
+        const accessToken = localStorage.getItem('accessToken');
+    
+        // Send a request to the logout endpoint with the access token in the headers
+        await axios.post(
+            'https://euloges.onrender.com/logout',
+            {}, // Request body (empty in this case)
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Add the token to the Authorization header
+                },
+            }
+        );
+
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("user");
+        localStorage.removeItem("user_[object Object]")
+
+        // Log success message to the console
+        console.log('Logout successful');
+
+        // Show a success message to the user
+        alert('Logout successfully');
+
+        // Redirect to the login page or home page
+        navigate('/');
+    } catch (error) {
+        console.error('Logout failed:', error);
+        alert('Failed to logout. Please try again.');
+    }
+};
 
   const handleClick = () => {
     // Close the mobile drawer first
@@ -22,8 +57,10 @@ const DrawNav = ({
       setIsNotificationModalOpen(true);
     } else if (label === 'Explore') {
       setIsSearchBarModalOpen(true);
-    } else if (path) {
+    } else if (label=== "Home") {
       navigate(path);
+    } else if (label === 'Logout') {
+      handleLogout();
     }
   };
 
