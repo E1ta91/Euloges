@@ -326,7 +326,7 @@ const Post = ({ triggerRefresh }) => {
               {/* <h1>{post.title}</h1> */}
           
               <ShareButton
-                url={`https://euloges.com.netlify.app/post/${post.id}`}
+                url={`https://euloges.netlify.app/post/${post.id}`}
                 
               />
             </div>
