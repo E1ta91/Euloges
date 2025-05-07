@@ -20,7 +20,10 @@ export const UserProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setUser(response.data);
+      setUser({
+        ...response.data,
+        token // Include the token in the user object
+      });
     } catch (error) {
       console.error("Error fetching user:", error);
       setUser(null);
@@ -29,16 +32,14 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // Sync user when token changes (e.g., login/logout)
   useEffect(() => {
     const handleStorageChange = () => {
-      fetchUser(); // Re-fetch when token updates
+      fetchUser();
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Initial fetch
   useEffect(() => {
     fetchUser();
   }, []);
@@ -47,8 +48,17 @@ export const UserProvider = ({ children }) => {
     setUser(prev => ({ ...prev, ...newData }));
   };
 
+  // Provide both the user object AND direct access to userId/token
   return (
-    <UserContext.Provider value={{ user, loading, fetchUser, updateUserProfile }}>
+    <UserContext.Provider value={{ 
+      user, 
+      loading, 
+      fetchUser, 
+      updateUserProfile,
+      // Direct accessors your Following component needs:
+      userId: user?._id || user?.id, // Use whichever field your backend returns
+      token: user?.token || localStorage.getItem("accessToken")
+    }}>
       {children}
     </UserContext.Provider>
   );

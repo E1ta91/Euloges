@@ -35,8 +35,9 @@ const SideBar = () => {
 
             localStorage.removeItem("accessToken");
             localStorage.removeItem("userId");
-            localStorage.removeItem("user");
             localStorage.removeItem("user_[object Object]")
+            localStorage.removeItem("followedUsers_undefined")
+            
     
             // Log success message to the console
             console.log('Logout successful');
@@ -51,6 +52,8 @@ const SideBar = () => {
             alert('Failed to logout. Please try again.');
         }
     };
+   
+      
 
     return (
         <div>
@@ -104,14 +107,14 @@ const SideBar = () => {
                             <div className="w-full h-full rounded-full bg-gray-200 animate-pulse"></div>
                         ) : (
                             <img
-                                src={user.profilePicture || '/default-avatar.png'}
+                                src={user?.profilePicture || '/default-avatar.png'}
                                 alt="Profile"
                                 className="w-full h-full rounded-full object-cover border-2 border-white/80 shadow-sm"
                             />
                         )}
                     </div>
                     <p style={{ fontFamily: 'playfair' }} className='text-base lg:text-lg'>
-                        {loading ? "Loading..." : user.name || "Guest"}
+                        {loading ? "Loading..." : user?.name || "Guest"}
                     </p>
                 </Link>
             </div>

@@ -9,7 +9,7 @@ import { useUser } from "../context/UserContext";
 
 const SignInModal = ({ isOpen, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userid, setUserid] = useState(null); // Store user ID
+
   const { fetchUser } = useUser(); // Get fetchUser from context
   const navigate = useNavigate();
 
@@ -54,10 +54,11 @@ const SignInModal = ({ isOpen, onClose }) => {
         email: data.email,
         password: data.password,
       });
-
+      console.log("Login response:", res.data);
       localStorage.setItem("accessToken", res.data.accessToken);
       await fetchUser(); // Critical: Wait for user data to load
       toast.success(res.data.message);
+      console.log("User data:", res.data.message);
       navigate("/main"); // Redirect AFTER data is ready
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed!");

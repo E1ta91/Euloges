@@ -1,44 +1,75 @@
-import React, { useState } from 'react';
-import { FaFacebook, FaWhatsapp, FaTwitter, FaInstagram, FaShare } from 'react-icons/fa';
-import { FacebookShareButton, WhatsappShareButton, TwitterShareButton } from 'react-share';
+import React, { useEffect, useRef, useState } from 'react';
+import { FaFacebook, FaWhatsapp,  FaTwitter,  FaShare,  FaLink } from 'react-icons/fa';
+import {  FacebookShareButton, WhatsappShareButton, TwitterShareButton,  EmailShareButton } from 'react-share';
 
 const ShareButton = ({ url, text }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  // Copy link to clipboard
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(url);
+    alert("Link copied to clipboard!");
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <div className=" block">
-      
-      <button onClick={toggleDropdown} className="">
-        <FaShare className="w-5 h-5 " />
+    <div className="relative inline-block">
+      {/* Share trigger button */}
+      <button 
+        onClick={toggleDropdown} 
+        className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+      >
+        <FaShare className="w-5 h-5 text-gray-600" />
       </button>
 
-
+      {/* Dropdown menu */}
       {isOpen && (
-        <div className=" bg-white border rounded-lg shadow-lg p-2  flex  space-x-4">
-          <FacebookShareButton url={url} quote={text}>
-            <div className="flex items-center space-x-2">
-              <FaFacebook className="w-5 h-5 text-blue-600" />
-             
-            </div>
+        <div className="absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-3 flex space-x-3 z-50">
+          {/* Facebook */}
+          <FacebookShareButton 
+            url={url} 
+            quote={text}
+            className="hover:opacity-80 transition-opacity"
+          >
+            <FaFacebook className="w-6 h-6 text-blue-600" />
           </FacebookShareButton>
-          <WhatsappShareButton url={url} title={text}>
-            <div className="flex items-center space-x-2">
-              <FaWhatsapp className="w-5 h-5 text-green-600" />
-              
-            </div>
+
+          {/* WhatsApp */}
+          <WhatsappShareButton 
+            url={url} 
+            title={text}
+            className="hover:opacity-80 transition-opacity"
+          >
+            <FaWhatsapp className="w-6 h-6 text-green-500" />
           </WhatsappShareButton>
-          <TwitterShareButton url={url} title={text}>
-            <div className="flex items-center space-x-2">
-              <FaTwitter className="w-5 h-5 text-blue-400" />
-              
-              
-            </div>
+
+          {/* Twitter */}
+          <TwitterShareButton 
+            url={url} 
+            title={text}
+            className="hover:opacity-80 transition-opacity"
+          >
+            <FaTwitter className="w-6 h-6 text-blue-400" />
           </TwitterShareButton>
-         
+
+          {/* Copy link */}
+          <button 
+            onClick={copyToClipboard}
+            className="hover:opacity-80 transition-opacity"
+          >
+            <FaLink className="w-6 h-6 text-gray-500" />
+          </button>
         </div>
       )}
     </div>
@@ -46,4 +77,3 @@ const ShareButton = ({ url, text }) => {
 };
 
 export default ShareButton;
-

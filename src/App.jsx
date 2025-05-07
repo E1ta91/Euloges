@@ -5,6 +5,8 @@ import ChatApp from './components/chatApp'
 import Profile from './pages/profile'
 import { UserProvider } from './context/UserContext'
 import UserProfile from './pages/userProfile'
+import Following from './pages/following'
+import Followers from './pages/followers'
 
 
 function App() {
@@ -31,7 +33,14 @@ function App() {
    path: 'profile/:id',
    element: <UserProfile/> 
   },
- 
+ {
+  path: 'following',
+  element: <Following/>
+ },
+ {
+  path: 'followers',
+  element: <Followers/>
+ }
  
  
    

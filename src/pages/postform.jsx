@@ -75,86 +75,78 @@ const PostForm = ({ onNewPost }) => {
     setError(null);
 
     try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken || !user?.id) {
-        throw new Error("Authentication required");
-      }
-
-      let uploadUrl = "";
-
-      if (media?.file) {
-        const result = await uploadToCloudinary(media.file);
-        uploadUrl = result.url;
-        console.log("Uploaded media URL:", uploadUrl);
-
-        if (!uploadUrl) {
-          throw new Error("File upload failed. No URL received from Cloudinary.");
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken || !user?.id) {
+            throw new Error("Authentication required");
         }
-      }
 
-      const postData = {
-        user: user.id,
-        content: text || "",
-        uploadUrl: uploadUrl,
-        likes: [],
-        views: [],
-        tributes: [],
-        condolences: [],
-        donations: [],
-        comments: [],
-      };
+        let uploadUrl = "";
 
-      if (uploadUrl && media?.type?.startsWith("audio")) {
-        postData.music = [{
-          url: [uploadUrl],
-          addedBy: user.id,
-          uploadedAt: new Date().toISOString(),
-          duration: 0,
-        }];
-      }
+        if (media?.file) {
+            const result = await uploadToCloudinary(media.file);
+            uploadUrl = result.url;
+            console.log("Uploaded media URL:", uploadUrl);
 
-      console.log("Post data being sent:", postData);
+            if (!uploadUrl) {
+                throw new Error("File upload failed. No URL received from Cloudinary.");
+            }
+        }
 
-      const response = await fetch("https://euloges.onrender.com/add-post", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
+        const postData = {
+            user: user.id,
+            content: text || "",
+            uploadUrl: uploadUrl,
+        };
 
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to create post");
-      }
+        if (uploadUrl && media?.type?.startsWith("audio")) {
+            postData.music = [{
+                url: uploadUrl,
+                addedBy: user.id,
+                uploadedAt: new Date().toISOString(),
+                duration: 0,
+            }];
+        }
 
-      console.log("Post created successfully:", result);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+        console.log("Post data being sent:", postData);
 
-      // Call the onNewPost callback with the new post data
-      if (onNewPost) {
-        onNewPost({
-          ...result,
-          userData: {
-            ...user,
-            profilePicture: profilePicture
-          },
-          createdAt: new Date().toISOString()
+        const response = await fetch("https://euloges.onrender.com/add-post", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
         });
-      }
 
-      setText("");
-      setMedia(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+        const responseText = await response.text(); // Read raw response text
+        console.log("Raw response:", responseText);
+
+        if (!response.ok) {
+            throw new Error(`Failed to create post: ${responseText}`);
+        }
+
+        const result = JSON.parse(responseText); // Parse JSON if valid
+        console.log("Post created successfully:", result);
+
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+
+        if (onNewPost) {
+            onNewPost({...result, userData: {  ...user, profilePicture: profilePicture,  },
+                createdAt: new Date().toISOString(),
+            });
+        }
+
+        setText("");
+        setMedia(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
-      console.error("Submission error:", err);
-      setError(err.message);
+        console.error("Submission error:", err);
+        setError(err.message);
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
 
   const handleMediaChange = (e) => {
     const file = e.target.files[0];

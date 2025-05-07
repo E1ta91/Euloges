@@ -6,7 +6,8 @@ import DonateModal from '../components/donateModal.jsx';
 import { useUser } from '../context/UserContext.jsx';
 import { Cross } from 'lucide-react';
 
-const Post = ({ posts, setPosts, triggerRefresh }) => {
+const Post = ({ triggerRefresh }) => {
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user: currentUser } = useUser();
@@ -242,6 +243,7 @@ const Post = ({ posts, setPosts, triggerRefresh }) => {
 
   return (
     <div className="space-y-8 w-full max-w-2xl mx-auto">
+
       {posts.slice().reverse().map((post) => (
         <div key={post.id} className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-4 mb-4">
@@ -320,11 +322,14 @@ const Post = ({ posts, setPosts, triggerRefresh }) => {
               <GiTwirlyFlower className="text-xl" />
             </button>
 
-            <ShareButton
-              url={window.location.href}
-              text={post.content}
-              className="hover:text-blue-500 transition-colors"
-            />
+            <div>
+              {/* <h1>{post.title}</h1> */}
+          
+              <ShareButton
+                url={`https://euloges.com.netlify.app/post/${post.id}`}
+                
+              />
+            </div>
           </div>
 
           {commentVisibility[post.id] && (

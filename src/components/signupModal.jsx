@@ -6,32 +6,26 @@ import { toast } from "react-toastify";
 import Loader from "./loader";
 
 const SignUpModal = ({ isOpen, onClose, onSignupSuccess }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ reValidateMode: "onBlur", mode: "all" });
+  const { register, handleSubmit, formState: { errors }, } = useForm({ reValidateMode: "onBlur", mode: "all" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
-
   const formatDateOfBirth = (dateString) => {
-    const date = new Date(dateString);
+  const date = new Date(dateString);
     return date.toISOString();
   };
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-    
+
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('email', data.email);
     formData.append('password', data.password);
     formData.append('dateOfBirth', formatDateOfBirth(data.dateOfBirth));
-    
-   
     try {
       const res = await apiSignUp(formData);
-      toast.success("Signup successful!");
+      console.log("res", res.data);
+      toast.success(res.data.message);
       onSignupSuccess();
     } catch (error) {
       toast.error(error.response?.data?.message || "An error occurred during signup!");
@@ -75,7 +69,7 @@ const SignUpModal = ({ isOpen, onClose, onSignupSuccess }) => {
                 <input
                   id="email"
                   type="email"
-                  {...register("email", { 
+                  {...register("email", {
                     required: "Email is required",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -116,7 +110,7 @@ const SignUpModal = ({ isOpen, onClose, onSignupSuccess }) => {
                 <input
                   id="password"
                   type="password"
-                  {...register("password", { 
+                  {...register("password", {
                     required: "Password is required",
                     minLength: {
                       value: 8,

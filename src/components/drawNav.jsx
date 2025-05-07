@@ -31,7 +31,7 @@ const DrawNav = ({
         localStorage.removeItem("userId");
         localStorage.removeItem("user");
         localStorage.removeItem("user_[object Object]")
-
+      
         // Log success message to the console
         console.log('Logout successful');
 
