@@ -3,12 +3,15 @@ import SideBar from '../components/sidebar';
 import PostForm from './postform';
 import Post from '../components/post';
 import Advertisement from '../components/advertisement';
+import { useParams } from 'react-router-dom';
 
 
 
 const MainPage = () => {
   const [posts, setPosts] = useState([]);
   const [triggerRefresh, setTriggerRefresh] = useState(false);
+  const { postId } = useParams();
+  console.log('Post ID from URL:', postId); 
 
   // Callback when a new post is created
   const handleNewPost = (newPost) => {

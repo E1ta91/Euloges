@@ -17,10 +17,15 @@ function App() {
     element: <LandingPage/>
   },
   {
+    path: 'main/:postId',
+    element: <MainPage/>
+  },
+  {
     path: 'main',
     element: < MainPage/>
     
   },
+ 
   {
    path: 'chat',
    element: <ChatApp/> 
